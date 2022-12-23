@@ -82,6 +82,11 @@ export class StaticAuthSessionManager<T> implements MutableSessionManager<T> {
     this.stateTracker.setIsSignedIn(false);
   }
 
+  async createSession(oAuth2Response: T): Promise<void> {
+    this.currentSession = oAuth2Response;
+    this.stateTracker.setIsSignedIn(true);
+  }
+
   sessionState$() {
     return this.stateTracker.sessionState$();
   }

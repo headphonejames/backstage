@@ -33,6 +33,10 @@ type Options<AuthSession> = {
    */
   environment: string;
   /**
+   * use a popup or a redirect for authentication with backend authentication api
+   */
+  usePopup: boolean;
+  /**
    * Information about the auth provider to be shown to the user.
    * The ID Must match the backend auth plugin configuration, for example 'google'.
    */
@@ -81,16 +85,14 @@ export class DefaultAuthConnector<AuthSession>
       provider,
       joinScopes = defaultJoinScopes,
       oauthRequestApi,
+      usePopup,
       sessionTransform = id => id,
     } = options;
-
-    // TODO integrate with configAPI, pass down as option
-    const isRedirect = true;
 
     this.authRequester = oauthRequestApi.createAuthRequester({
       provider,
       onAuthRequest: async scopes => {
-        if (isRedirect) {
+        if (!usePopup) {
           // modal before redirect
           const scope = this.joinScopesFunc(scopes);
           const redirectUrl = await this.buildUrl('/start', {

@@ -37,6 +37,7 @@ export default class GithubAuth {
       provider = DEFAULT_PROVIDER,
       oauthRequestApi,
       defaultScopes = ['read:user'],
+      usePopup = true,
     } = options;
 
     return OAuth2.create({
@@ -45,6 +46,7 @@ export default class GithubAuth {
       provider,
       environment,
       defaultScopes,
+      usePopup,
     });
   }
 }

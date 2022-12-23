@@ -46,6 +46,7 @@ export default class OktaAuth {
     const {
       discoveryApi,
       environment = 'development',
+      usePopup = true,
       provider = DEFAULT_PROVIDER,
       oauthRequestApi,
       defaultScopes = ['openid', 'email', 'profile', 'offline_access'],
@@ -56,6 +57,7 @@ export default class OktaAuth {
       oauthRequestApi,
       provider,
       environment,
+      usePopup,
       defaultScopes,
       scopeTransform(scopes) {
         return scopes.map(scope => {

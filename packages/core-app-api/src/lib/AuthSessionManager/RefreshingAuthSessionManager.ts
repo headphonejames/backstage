@@ -66,7 +66,7 @@ export class RefreshingAuthSessionManager<T> implements SessionManager<T> {
   async createSession(oAuth2Response: T): Promise<void> {
     this.currentSession = oAuth2Response;
     // this will initialize the session
-    const sessionData = await this.getSession({
+    await this.getSession({
       instantPopup: false,
     });
     this.stateTracker.setIsSignedIn(true);
@@ -106,8 +106,7 @@ export class RefreshingAuthSessionManager<T> implements SessionManager<T> {
     // already had an existing session.
     if (!this.currentSession && !options.instantPopup) {
       try {
-        const newSession = await this.collapsedSessionRefresh();
-        this.currentSession = newSession;
+        this.currentSession = await this.collapsedSessionRefresh();
         // The session might not have the scopes requested so go back and check again
         return this.getSession(options);
       } catch {

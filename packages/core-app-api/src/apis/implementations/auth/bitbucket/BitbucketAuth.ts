@@ -49,6 +49,7 @@ export default class BitbucketAuth {
     const {
       discoveryApi,
       environment = 'development',
+      usePopup = true,
       provider = DEFAULT_PROVIDER,
       oauthRequestApi,
       defaultScopes = ['team'],
@@ -59,6 +60,7 @@ export default class BitbucketAuth {
       oauthRequestApi,
       provider,
       environment,
+      usePopup,
       defaultScopes,
     });
   }

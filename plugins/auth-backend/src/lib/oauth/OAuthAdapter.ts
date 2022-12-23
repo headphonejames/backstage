@@ -56,6 +56,7 @@ export type OAuthAdapterOptions = {
   cookieConfigurer: CookieConfigurer;
   isOriginAllowed: (origin: string) => boolean;
   callbackUrl: string;
+  redirectAuthenticationResponse: boolean;
 };
 
 /** @public */
@@ -68,7 +69,8 @@ export class OAuthAdapter implements AuthProviderRouteHandlers {
       'providerId' | 'persistScopes' | 'callbackUrl' | 'redirectUrl'
     >,
   ): OAuthAdapter {
-    const { appUrl, baseUrl, isOriginAllowed } = config;
+    const { appUrl, baseUrl, isOriginAllowed, redirectAuthenticationResponse } =
+      config;
     const { origin: appOrigin } = new URL(appUrl);
 
     const cookieConfigurer = config.cookieConfigurer ?? defaultCookieConfigurer;
@@ -79,6 +81,7 @@ export class OAuthAdapter implements AuthProviderRouteHandlers {
       baseUrl,
       cookieConfigurer,
       isOriginAllowed,
+      redirectAuthenticationResponse,
     });
   }
 
