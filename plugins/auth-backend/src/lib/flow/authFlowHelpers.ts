@@ -67,16 +67,28 @@ export const postMessageResponse = (
   res.setHeader('Content-Type', 'text/html');
   res.setHeader('X-Frame-Options', 'sameorigin');
   res.setHeader('Content-Security-Policy', `script-src 'sha256-${hash}'`);
+  res.end(`<html><body><script>${script}</script></body></html>`);
+};
 
-  // TODO: Create separate handler and helper for redirect auth flow
-  const isRedirect = true;
-  if (isRedirect) {
-    res.cookie('authSecData', jsonData);
-    // TODO: add provider data
-    res.redirect(redirectUrl);
-  } else {
-    res.end(`<html><body><script>${script}</script></body></html>`);
-  }
+/** @public */
+export const redirectMessageResponse = (
+  res: express.Response,
+  appOrigin: string,
+  redirectUrl: string,
+  response: WebMessageResponse,
+) => {
+  const jsonData = JSON.stringify(response);
+  const base64Data = safelyEncodeURIComponent(jsonData);
+  const base64Origin = safelyEncodeURIComponent(appOrigin);
+
+  // NOTE: It is absolutely imperative that we use the safe encoder above, to
+  // be sure that the js code below does not allow the injection of malicious
+  // data.
+
+  // TODO: encode cookie and http-only
+  res.cookie('authSecData', jsonData);
+  // TODO: add provider data
+  res.redirect(redirectUrl);
 };
 
 /** @public */

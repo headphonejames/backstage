@@ -34,6 +34,7 @@ export default class GitlabAuth {
     const {
       discoveryApi,
       environment = 'development',
+      usePopup = true,
       provider = DEFAULT_PROVIDER,
       oauthRequestApi,
       defaultScopes = ['read_user'],
@@ -44,6 +45,7 @@ export default class GitlabAuth {
       oauthRequestApi,
       provider,
       environment,
+      usePopup,
       defaultScopes,
     });
   }

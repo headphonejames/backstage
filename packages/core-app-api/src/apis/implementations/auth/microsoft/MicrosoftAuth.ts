@@ -33,6 +33,7 @@ export default class MicrosoftAuth {
   static create(options: OAuthApiCreateOptions): typeof microsoftAuthApiRef.T {
     const {
       environment = 'development',
+      usePopup = true,
       provider = DEFAULT_PROVIDER,
       oauthRequestApi,
       discoveryApi,
@@ -50,6 +51,7 @@ export default class MicrosoftAuth {
       oauthRequestApi,
       provider,
       environment,
+      usePopup,
       defaultScopes,
     });
   }

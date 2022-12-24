@@ -66,7 +66,7 @@ export class RefreshingAuthSessionManager<T> implements SessionManager<T> {
   async createSession(oAuth2Response: T): Promise<void> {
     this.currentSession = oAuth2Response;
     // this will initialize the session
-    const sessionData = await this.getSession({
+    await this.getSession({
       instantPopup: false,
     });
     this.stateTracker.setIsSignedIn(true);

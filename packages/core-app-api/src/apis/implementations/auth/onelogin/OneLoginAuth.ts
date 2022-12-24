@@ -30,6 +30,7 @@ export type OneLoginAuthCreateOptions = {
   discoveryApi: DiscoveryApi;
   oauthRequestApi: OAuthRequestApi;
   environment?: string;
+  usePopup?: boolean;
   provider?: AuthProviderInfo;
 };
 
@@ -63,6 +64,7 @@ export default class OneLoginAuth {
     const {
       discoveryApi,
       environment = 'development',
+      usePopup = true,
       provider = DEFAULT_PROVIDER,
       oauthRequestApi,
     } = options;
@@ -72,6 +74,7 @@ export default class OneLoginAuth {
       oauthRequestApi,
       provider,
       environment,
+      usePopup,
       defaultScopes: ['openid', 'email', 'profile', 'offline_access'],
       scopeTransform(scopes) {
         return scopes.map(scope => {
