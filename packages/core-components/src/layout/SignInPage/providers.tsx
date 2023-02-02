@@ -32,7 +32,7 @@ import { guestProvider } from './guestProvider';
 import { customProvider } from './customProvider';
 import { IdentityApiSignOutProxy } from './IdentityApiSignOutProxy';
 
-const PROVIDER_STORAGE_KEY = '@backstage/core:SignInPage:provider';
+export const PROVIDER_STORAGE_KEY = '@backstage/core:SignInPage:provider';
 
 export type SignInProviderType = {
   [key: string]: {
@@ -172,8 +172,6 @@ export const useSignInProviders = (
         const { Component } = provider.components;
 
         const handleSignInSuccess = (result: IdentityApi) => {
-          localStorage.setItem(PROVIDER_STORAGE_KEY, provider.id);
-
           handleWrappedResult(result);
         };
 

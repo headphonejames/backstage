@@ -63,10 +63,11 @@ export function OAuthRequestDialog(_props: {}) {
   const [busy, setBusy] = useState(false);
   const oauthRequestApi = useApi(oauthRequestApiRef);
   const configApi = useApi(configApiRef);
-  const usePopup = configApi.getOptionalBoolean('auth.usePopup') ?? true;
-  const redirectMessage = usePopup
-    ? ''
-    : 'This will trigger a http redirect to OAuth Login.';
+  const authFlow = configApi.getOptionalString('auth.authFlow') ?? 'popup';
+  const redirectMessage =
+    authFlow === 'popup'
+      ? ''
+      : 'This will trigger a http redirect to OAuth Login.';
 
   const requests = useObservable(
     useMemo(() => oauthRequestApi.authRequest$(), [oauthRequestApi]),

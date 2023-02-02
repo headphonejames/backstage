@@ -19,7 +19,6 @@ import {
   safelyEncodeURIComponent,
   ensuresXRequestedWith,
   postMessageResponse,
-  redirectMessageResponse,
 } from './authFlowHelpers';
 import { WebMessageResponse } from './types';
 

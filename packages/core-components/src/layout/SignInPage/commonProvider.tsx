@@ -28,21 +28,24 @@ import { useApi, errorApiRef, configApiRef } from '@backstage/core-plugin-api';
 import { GridItem } from './styles';
 import { ForwardedError } from '@backstage/errors';
 import { UserIdentity } from './UserIdentity';
+import { PROVIDER_STORAGE_KEY } from './providers';
 
 const Component: ProviderComponent = ({ config, onSignInSuccess }) => {
-  const { apiRef, title, message } = config as SignInProviderConfig;
+  const { apiRef, title, message, id } = config as SignInProviderConfig;
   const authApi = useApi(apiRef);
   const errorApi = useApi(errorApiRef);
   const configApi = useApi(configApiRef);
-  const usePopup = configApi.getOptionalBoolean('auth.usePopup') ?? true;
+  const authFlow = configApi.getOptionalString('auth.authFlow') ?? 'redirect';
 
   const handleLogin = async () => {
     try {
+      localStorage.setItem(PROVIDER_STORAGE_KEY, id);
+
       const identityResponse = await authApi.getBackstageIdentity({
-        instantPopup: usePopup,
+        instantPopup: true,
       });
       if (!identityResponse) {
-        if (!usePopup) {
+        if (!authFlow) {
           return;
         }
         throw new Error(

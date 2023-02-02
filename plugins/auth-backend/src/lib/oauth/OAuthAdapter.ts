@@ -185,7 +185,7 @@ export class OAuthAdapter implements AuthProviderRouteHandlers {
       };
 
       if (!this.options.isPopupAuthenticationRequest) {
-        return redirectMessageResponse(res, redirectUrl);
+        res.redirect(redirectUrl);
       }
       // post message back to popup if successful
       return postMessageResponse(res, appOrigin, responseObj);

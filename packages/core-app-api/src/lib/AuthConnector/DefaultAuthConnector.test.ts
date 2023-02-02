@@ -34,10 +34,9 @@ const defaultOptions = {
   provider: {
     id: 'my-provider',
     title: 'My Provider',
-    provider_id: 'myprovider-auth-provider',
     icon: () => null,
   },
-  usePopup: true,
+  authFlow: 'popup',
   oauthRequestApi: new MockOAuthApi(),
   sessionTransform: ({ expiresInSeconds, ...res }: any) => ({
     ...res,
@@ -201,7 +200,7 @@ describe('DefaultAuthConnector', () => {
     });
     const helper = new DefaultAuthConnector({
       ...defaultOptions,
-      usePopup: false,
+      authFlow: 'redirect',
       oauthRequestApi: mockOauth,
     });
 

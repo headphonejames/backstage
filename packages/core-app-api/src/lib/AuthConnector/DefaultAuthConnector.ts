@@ -33,9 +33,9 @@ type Options<AuthSession> = {
    */
   environment: string;
   /**
-   * use a popup or a redirect for authentication with backend authentication api
+   * The UI authentication flow. Currently supports either 'popup' or 'redirect' for authentication with backend authentication api
    */
-  usePopup: boolean;
+  authFlow: string;
   /**
    * Information about the auth provider to be shown to the user.
    * The ID Must match the backend auth plugin configuration, for example 'google'.
@@ -81,36 +81,17 @@ export class DefaultAuthConnector<AuthSession>
       provider,
       joinScopes = defaultJoinScopes,
       oauthRequestApi,
-      usePopup,
+      authFlow,
       sessionTransform = id => id,
     } = options;
 
     this.authRequester = oauthRequestApi.createAuthRequester({
       provider,
       onAuthRequest: async scopes => {
-        if (!usePopup) {
-          // modal before redirect
-          const scope = this.joinScopesFunc(scopes);
-          const redirectUrl = await this.buildUrl('/start', {
-            scope,
-            origin: window.location.origin,
-            redirectUrl: window.location.href,
-            authType: 'redirect',
-          });
-
-          if (provider.hasOwnProperty('provider_id')) {
-            // set the sign in provider here
-            localStorage.setItem(
-              '@backstage/core:SignInPage:provider',
-              provider.provider_id!,
-            );
-          }
-
-          window.location.href = redirectUrl;
-          // we need to return to exit function or else popup occurs
-          return Promise.resolve({} as AuthSession);
+        if (authFlow === 'popup') {
+          return this.showPopup(scopes);
         }
-        return this.showPopup(scopes);
+        return this.executeRedirect(scopes);
       },
     });
 
@@ -123,6 +104,7 @@ export class DefaultAuthConnector<AuthSession>
 
   async createSession(options: CreateSessionOptions): Promise<AuthSession> {
     if (options.instantPopup) {
+      // check if doing redirect
       return this.showPopup(options.scopes);
     }
     return this.authRequester(options.scopes);
@@ -195,6 +177,21 @@ export class DefaultAuthConnector<AuthSession>
     });
 
     return await this.sessionTransform(payload);
+  }
+
+  private async executeRedirect(scopes: Set<string>): Promise<AuthSession> {
+    // modal before redirect
+    const scope = this.joinScopesFunc(scopes);
+    const redirectUrl = await this.buildUrl('/start', {
+      scope,
+      origin: window.location.origin,
+      redirectUrl: window.location.href,
+      authType: 'redirect',
+    });
+    // redirect to auth api
+    window.location.href = redirectUrl;
+    // we need to return to exit function or else popup occurs
+    return new Promise(() => {});
   }
 
   private async buildUrl(
