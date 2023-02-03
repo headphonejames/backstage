@@ -32,7 +32,7 @@ import { guestProvider } from './guestProvider';
 import { customProvider } from './customProvider';
 import { IdentityApiSignOutProxy } from './IdentityApiSignOutProxy';
 
-const PROVIDER_STORAGE_KEY = '@backstage/core:SignInPage:provider';
+export const PROVIDER_STORAGE_KEY = '@backstage/core:SignInPage:provider';
 
 export type SignInProviderType = {
   [key: string]: {
@@ -83,6 +83,7 @@ export function getSignInProviders(
 export const useSignInProviders = (
   providers: SignInProviderType,
   onSignInSuccess: SignInPageProps['onSignInSuccess'],
+  onSignInFailure: SignInPageProps['onSignInFailure'],
 ) => {
   const errorApi = useApi(errorApiRef);
   const apiHolder = useApiHolder();
@@ -134,6 +135,7 @@ export const useSignInProviders = (
       .loader(apiHolder, provider.config?.apiRef!)
       .then(result => {
         if (didCancel) {
+          onSignInFailure();
           return;
         }
         if (result) {
@@ -144,9 +146,9 @@ export const useSignInProviders = (
       })
       .catch(error => {
         if (didCancel) {
+          onSignInFailure();
           return;
         }
-        localStorage.removeItem(PROVIDER_STORAGE_KEY);
         errorApi.post(error);
         setLoading(false);
       });
@@ -158,6 +160,7 @@ export const useSignInProviders = (
     loading,
     errorApi,
     onSignInSuccess,
+    onSignInFailure,
     apiHolder,
     providers,
     handleWrappedResult,
@@ -172,9 +175,11 @@ export const useSignInProviders = (
         const { Component } = provider.components;
 
         const handleSignInSuccess = (result: IdentityApi) => {
-          localStorage.setItem(PROVIDER_STORAGE_KEY, provider.id);
-
           handleWrappedResult(result);
+        };
+
+        const handleSignInFailure = () => {
+          localStorage.removeItem(PROVIDER_STORAGE_KEY);
         };
 
         return (
@@ -182,6 +187,7 @@ export const useSignInProviders = (
             key={provider.id}
             config={provider.config!}
             onSignInSuccess={handleSignInSuccess}
+            onSignInFailure={handleSignInFailure}
           />
         );
       }),

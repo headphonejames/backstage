@@ -48,6 +48,10 @@ export type SignInPageProps = {
    * Set the IdentityApi on successful sign in. This should only be called once.
    */
   onSignInSuccess(identityApi: IdentityApi): void;
+  /**
+   * Clear localstorage provider key
+   */
+  onSignInFailure(): void;
 };
 
 /**

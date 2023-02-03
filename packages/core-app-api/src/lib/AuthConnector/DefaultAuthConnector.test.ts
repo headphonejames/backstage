@@ -34,16 +34,15 @@ const defaultOptions = {
   provider: {
     id: 'my-provider',
     title: 'My Provider',
-    provider_id: 'myprovider-auth-provider',
     icon: () => null,
   },
-  usePopup: true,
   oauthRequestApi: new MockOAuthApi(),
   sessionTransform: ({ expiresInSeconds, ...res }: any) => ({
     ...res,
     scopes: new Set(res.scopes.split(' ')),
     expiresAt: new Date(Date.now() + expiresInSeconds * 1000),
   }),
+  authFlow: 'popup',
 };
 
 describe('DefaultAuthConnector', () => {
@@ -133,7 +132,7 @@ describe('DefaultAuthConnector', () => {
 
     expect(popupSpy).toHaveBeenCalledTimes(1);
     expect(popupSpy.mock.calls[0][0]).toMatchObject({
-      url: 'http://my-host/api/auth/my-provider/start?scope=a%20b&origin=http%3A%2F%2Flocalhost&env=production',
+      url: 'http://my-host/api/auth/my-provider/start?scope=a%20b&origin=http%3A%2F%2Flocalhost&authFlow=popup&env=production',
     });
 
     await expect(sessionPromise).resolves.toEqual({
@@ -181,12 +180,12 @@ describe('DefaultAuthConnector', () => {
 
     expect(popupSpy).toHaveBeenCalledTimes(1);
     expect(popupSpy.mock.calls[0][0]).toMatchObject({
-      url: 'http://my-host/api/auth/my-provider/start?scope=-ab-&origin=http%3A%2F%2Flocalhost&env=production',
+      url: 'http://my-host/api/auth/my-provider/start?scope=-ab-&origin=http%3A%2F%2Flocalhost&authFlow=popup&env=production',
     });
   });
 
   it('should redirect to api server', async () => {
-    const mockOauth = new MockOAuthApi();
+    const mockOauth = new MockOAuthApi('redirect');
     const mockResponse = jest.fn();
     // replace the window.location object
     Object.defineProperty(window, 'location', {
@@ -201,7 +200,7 @@ describe('DefaultAuthConnector', () => {
     });
     const helper = new DefaultAuthConnector({
       ...defaultOptions,
-      usePopup: false,
+      authFlow: 'redirect',
       oauthRequestApi: mockOauth,
     });
 
@@ -214,7 +213,7 @@ describe('DefaultAuthConnector', () => {
     await expect(sessionPromise).resolves.toEqual({});
     // redirect to the auth api
     expect(window.location.href).toMatch(
-      'http://my-host/api/auth/my-provider/start?scope=a%20b&authType=redirect&env=production',
+      'http://my-host/api/auth/my-provider/start?scope=a%20b&authFlow=redirect&env=production',
     );
   });
 });

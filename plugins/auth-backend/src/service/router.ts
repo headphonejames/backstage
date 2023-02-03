@@ -108,7 +108,7 @@ export async function createRouter(
   };
   const providersConfig = config.getConfig('auth.providers');
   const isPopupAuthenticationRequest =
-    config.getOptionalBoolean('auth.usePopup') ?? true;
+    config.getOptionalString('auth.authFlow') === 'popup' ?? true;
 
   const configuredProviders = providersConfig.keys();
 

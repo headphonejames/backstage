@@ -22,6 +22,11 @@ import { OAuthRequestManager } from './OAuthRequestManager';
 
 export default class MockOAuthApi implements OAuthRequestApi {
   private readonly real = new OAuthRequestManager();
+  private readonly authFlowStr: string;
+
+  constructor(authFlowStr?: string) {
+    this.authFlowStr = authFlowStr || 'popup';
+  }
 
   createAuthRequester<T>(options: OAuthRequesterOptions<T>) {
     return this.real.createAuthRequester(options);
@@ -54,5 +59,9 @@ export default class MockOAuthApi implements OAuthRequestApi {
         resolve();
       });
     });
+  }
+
+  authFlow() {
+    return this.authFlowStr;
   }
 }

@@ -51,6 +51,7 @@ export type Props = MultiSignInPageProps | SingleSignInPageProps;
 
 export const MultiSignInPage = ({
   onSignInSuccess,
+  onSignInFailure,
   providers = [],
   title,
   align = 'left',
@@ -62,6 +63,7 @@ export const MultiSignInPage = ({
   const [loading, providerElements] = useSignInProviders(
     signInProviders,
     onSignInSuccess,
+    onSignInFailure,
   );
 
   if (loading) {

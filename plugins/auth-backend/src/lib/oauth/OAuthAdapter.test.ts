@@ -174,7 +174,6 @@ describe('OAuthAdapter', () => {
     const oauthProvider = new OAuthAdapter(providerInstance, {
       ...oAuthProviderOptions,
       isOriginAllowed: () => false,
-      isPopupAuthenticationRequest: false,
     });
 
     const mockRequest = createEncodedQueryMockRequest(defaultState);
